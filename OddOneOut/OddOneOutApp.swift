@@ -13,5 +13,6 @@ struct OddOneOutApp: App {
         WindowGroup {
             ContentView()
         }
+        .windowStyle(.hiddenTitleBar)
     }
 }
