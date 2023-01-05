@@ -50,6 +50,15 @@ struct ContentView: View {
             generateLayout(nAnimals: numberOfItems[currentLevel])
         }
     }
+    func processAnswer(at row: Int, _ column: Int) {
+        if image(row, column) == images[0] {
+            currentLevel += 1
+            createLevel()
+        } else {
+            if currentLevel > 1 { currentLevel -= 1 }
+            createLevel()
+        }
+    }
     
     var body: some View {
         ZStack {
@@ -67,6 +76,7 @@ struct ContentView: View {
                             } else {
                                 Button {
                                     print("Penguin was clicked")
+                                    processAnswer(at: row, column)
                                 } label: {
                                     Image(image(row, column))
                                 }
@@ -76,8 +86,35 @@ struct ContentView: View {
                     }
                 }
             }
+            .opacity(isGameOver ? 0.2 : 1)
+            if isGameOver {
+                VStack {
+                    Text("Game over!")
+                        .font(.largeTitle)
+                    
+                    Button("Play Again") {
+                        currentLevel = 1
+                        isGameOver = false
+                        createLevel()
+                    }
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .buttonStyle(.borderless)
+                    .padding(20)
+                    .background(.blue)
+                    .clipShape(Capsule())
+                }
+            }
         }
         .onAppear(perform: createLevel)
+        .contentShape(Rectangle())
+        .contextMenu {
+            Button("Start New Game") {
+                currentLevel = 1
+                isGameOver = false
+                createLevel()
+            }
+        }
     }
 }
 
