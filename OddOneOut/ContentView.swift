@@ -17,6 +17,39 @@ struct ContentView: View {
     func image(_ row: Int, _ column: Int) -> String {
         layout[row * Self.gridSize + column]
     }
+    func generateLayout(nAnimals: Int) {
+        layout.removeAll(keepingCapacity: true)
+        
+        images.shuffle()
+        layout.append(images[0])
+        
+        var nPlacements = 0
+        var animalIndex = 1
+        for _ in 1 ..< nAnimals {
+            layout.append(images[animalIndex])
+            nPlacements += 1
+            
+            if nPlacements == 2 {
+                nPlacements = 0
+                animalIndex += 1
+            }
+            if animalIndex == images.count {
+                animalIndex = 1
+            }
+        }
+        layout += Array(repeating: "empty", count: 100 - layout.count)
+        layout.shuffle()
+    }
+    func createLevel() {
+        if currentLevel == 9 {
+            withAnimation {
+                isGameOver = true
+            }
+        } else {
+            let numberOfItems = [0, 5, 15, 25, 35, 49, 65, 81, 100]
+            generateLayout(nAnimals: numberOfItems[currentLevel])
+        }
+    }
     
     var body: some View {
         ZStack {
@@ -44,6 +77,7 @@ struct ContentView: View {
                 }
             }
         }
+        .onAppear(perform: createLevel)
     }
 }
 
